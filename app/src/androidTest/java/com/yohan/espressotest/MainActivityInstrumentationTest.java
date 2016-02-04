@@ -23,7 +23,7 @@ public class MainActivityInstrumentationTest
         super.setUp();
         injectInstrumentation(InstrumentationRegistry.getInstrumentation());
         mActivity = getActivity();
-        Espresso.setFailureHandler(new MyFailureHandler(mActivity));
+//        Espresso.setFailureHandler(new MyFailureHandler(mActivity));
     }
 
     public void testSimple() {

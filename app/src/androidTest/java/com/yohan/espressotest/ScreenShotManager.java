@@ -23,15 +23,12 @@ public class ScreenShotManager {
 
     private CountDownLatch mLatch;
     private Bitmap firstBitmap;
-    private Bitmap secondBitmap;
     private Context context;
 
     private static final String CACHE_PATH =  "espressotest/files";
 
-
-
     public ScreenShotManager(Context context) {
-
+        this.context = context;
     }
 
     /**
@@ -39,9 +36,9 @@ public class ScreenShotManager {
      * @param view the view to convert to PNG image
      * @return a {@link Uri} to the location of the image on disk
      */
-    public Uri convertViewToPng(final View view, boolean addBanner) {
+    public Uri snap(final View view) {
         Context context = view.getContext();
-        getViewAndBitmap(context, view, true);
+        getViewAndBitmap(context, view);
         waitForUiThread();
         Uri uri = convertBitmapToPng(firstBitmap);
         return uri;
@@ -56,14 +53,13 @@ public class ScreenShotManager {
     }
 
     // this is an ui thread operation only.
-    private void getViewAndBitmap(Context context,final View view,final boolean first) {
+    private void getViewAndBitmap(Context context,final View view) {
         mLatch = new CountDownLatch(1);
         if (context instanceof Activity) {
             ((Activity) context).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (first) firstBitmap = convertViewToBitmap(view);
-                    else secondBitmap = convertViewToBitmap(view);
+                    firstBitmap = convertViewToBitmap(view);
                     mLatch.countDown();
                 }
             });
@@ -120,7 +116,7 @@ public class ScreenShotManager {
 
     private String getCacheDir() {
         String cacheDir;
-        if (Build.VERSION.SDK_INT > 22) {
+        if (Build.VERSION.SDK_INT >= 23) {
             cacheDir = context.getFilesDir() + CACHE_PATH;
         }
         else {
