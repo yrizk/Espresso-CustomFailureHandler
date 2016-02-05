@@ -1,6 +1,6 @@
 package com.yohan.espressotest;
 
-import android.content.Context;
+import android.app.Activity;
 import android.support.test.espresso.EspressoException;
 import android.support.test.espresso.FailureHandler;
 import android.support.test.espresso.PerformException;
@@ -20,17 +20,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MyFailureHandler implements FailureHandler {
 
     private static final AtomicInteger failureCount = new AtomicInteger(0);
-    private final Context appContext;
+    private final Activity activityRef;
+    private ScreenShotManager screenShotManager;
 
     public MyFailureHandler(
-            Context appContext) {
-        this.appContext = Preconditions.checkNotNull(appContext);
+            Activity ref) {
+        activityRef = Preconditions.checkNotNull(ref);
+        screenShotManager = new ScreenShotManager(ref);
     }
 
     @Override
     public void handle(Throwable error, Matcher<View> viewMatcher) {
         if (error instanceof EspressoException || error instanceof AssertionFailedError
                 || error instanceof AssertionError) {
+            screenShotManager.execute(activityRef.getWindow().getDecorView());
             throw Throwables.propagate(getUserFriendlyError(error, viewMatcher));
         } else {
             throw Throwables.propagate(error);

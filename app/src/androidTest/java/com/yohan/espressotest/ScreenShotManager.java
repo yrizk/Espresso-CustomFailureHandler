@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.support.v4.content.FileProvider;
@@ -25,11 +26,31 @@ public class ScreenShotManager {
     private Bitmap firstBitmap;
     private Context context;
 
-    private static final String CACHE_PATH =  "espressotest/files";
 
     public ScreenShotManager(Context context) {
         this.context = context;
     }
+
+    public void execute(View view) {
+        new BackgroundJob().execute(view);
+    }
+
+    public class BackgroundJob extends  AsyncTask<View,Void,Void> {
+
+        @Override
+        protected Void doInBackground(View... params) {
+            tryThis(params[0]);
+            return null;
+        }
+    }
+
+    public void tryThis(View view) {
+        view.setDrawingCacheEnabled(true);
+        Bitmap bitmap = view.getDrawingCache();
+        convertBitmapToPng(bitmap);
+    }
+
+
 
     /**
      * Creates a PNG image on disk with the specified view and logo on bottom
@@ -73,7 +94,7 @@ public class ScreenShotManager {
      * @return a {@link Uri} to the location of the image on disk
      */
     private Uri convertBitmapToPng(Bitmap bitmap) {
-        File screenshot = new File(getCacheDir(), "screenshot.png");
+        File screenshot = new File(getCacheDir(), "screenshot-" + System.currentTimeMillis() / 1000 + ".png");
         try {
             FileOutputStream fos = new FileOutputStream(screenshot);
             bitmap.compress(Bitmap.CompressFormat.PNG, 0, fos);
@@ -82,7 +103,11 @@ public class ScreenShotManager {
             if (Build.VERSION.SDK_INT >= 23) {
                 return FileProvider.getUriForFile(context, "com.buzzfeed.messenger.QuizChatFileProvider", screenshot);
             }
-            else return Uri.fromFile(screenshot);
+            else {
+                Log.d(TAG, "location of screenshot: " + screenshot.getAbsolutePath());
+                return Uri.fromFile(screenshot);
+
+            }
         } catch (IOException e) {
             Log.d(TAG, "Unable to write bitmap data to file");
             return null;
@@ -117,11 +142,12 @@ public class ScreenShotManager {
     private String getCacheDir() {
         String cacheDir;
         if (Build.VERSION.SDK_INT >= 23) {
-            cacheDir = context.getFilesDir() + CACHE_PATH;
+            cacheDir = context.getFilesDir().getAbsolutePath();
         }
         else {
-            cacheDir = Environment.getExternalStorageDirectory().getAbsolutePath() + CACHE_PATH;;
+            cacheDir = Environment.getExternalStorageDirectory().getAbsolutePath();;
         }
+        Log.d(TAG, "getCacheDir() : " + cacheDir);
         new File(cacheDir).mkdirs();
         return cacheDir;
     }
