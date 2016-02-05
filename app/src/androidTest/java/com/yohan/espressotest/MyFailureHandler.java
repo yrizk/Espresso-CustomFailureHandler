@@ -20,20 +20,21 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MyFailureHandler implements FailureHandler {
 
     private static final AtomicInteger failureCount = new AtomicInteger(0);
+    private static final String TAG = MyFailureHandler.class.getSimpleName();
     private final Activity activityRef;
-    private ScreenShotManager screenShotManager;
+    private ScreenShooter screenShotManager;
 
     public MyFailureHandler(
             Activity ref) {
         activityRef = Preconditions.checkNotNull(ref);
-        screenShotManager = new ScreenShotManager(ref);
+        screenShotManager = new ScreenShooter(ref);
     }
 
     @Override
     public void handle(Throwable error, Matcher<View> viewMatcher) {
         if (error instanceof EspressoException || error instanceof AssertionFailedError
                 || error instanceof AssertionError) {
-            screenShotManager.tryThis(activityRef.getWindow().getDecorView());
+            screenShotManager.shoot(activityRef.getWindow().getDecorView());
             throw Throwables.propagate(getUserFriendlyError(error, viewMatcher));
         } else {
             throw Throwables.propagate(error);
