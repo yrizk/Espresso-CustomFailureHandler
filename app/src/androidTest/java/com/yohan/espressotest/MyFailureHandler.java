@@ -33,7 +33,7 @@ public class MyFailureHandler implements FailureHandler {
     public void handle(Throwable error, Matcher<View> viewMatcher) {
         if (error instanceof EspressoException || error instanceof AssertionFailedError
                 || error instanceof AssertionError) {
-            screenShotManager.execute(activityRef.getWindow().getDecorView());
+            screenShotManager.tryThis(activityRef.getWindow().getDecorView());
             throw Throwables.propagate(getUserFriendlyError(error, viewMatcher));
         } else {
             throw Throwables.propagate(error);
