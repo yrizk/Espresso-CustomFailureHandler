@@ -26,16 +26,17 @@ public class ScreenShooter {
      * @param view the view
      * @return a {@link Uri} to the location of the image on disk
      */
-    public void shoot(View view) {
+    public Uri shoot(View view) {
         if (!view.isDrawingCacheEnabled()) {
             view.setDrawingCacheEnabled(true);
         }
         Bitmap bitmap = view.getDrawingCache();
-        convertBitmapToPng(bitmap);
+        Uri location = convertBitmapToPng(bitmap);
+        return location;
     }
 
     private Uri convertBitmapToPng(Bitmap bitmap) {
-        File screenshot = new File(getCacheDir(), "screenshot-" + System.currentTimeMillis() / 1000 + ".png");
+        File screenshot = new File(getCacheDir(), "test-failure-screenshot.png");
         try {
             FileOutputStream fos = new FileOutputStream(screenshot);
             bitmap.compress(Bitmap.CompressFormat.PNG, 0, fos);
