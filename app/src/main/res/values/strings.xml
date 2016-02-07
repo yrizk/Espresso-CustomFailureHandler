@@ -1,6 +1,0 @@
-<resources>
-    <string name="app_name">EspressoTest</string>
-    <string name="action_settings">Settings</string>
-    <string name="hello_espresso">Hello Espresso!</string>
-
-</resources>
