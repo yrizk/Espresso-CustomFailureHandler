@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
@@ -62,7 +61,7 @@ public class ScreenShooter {
             cacheDir = context.getFilesDir().getAbsolutePath();
         }
         else {
-            cacheDir = Environment.getExternalStorageDirectory().getAbsolutePath();;
+            cacheDir = context.getExternalCacheDir().getAbsolutePath();;
         }
         Log.d(TAG, "getCacheDir() : " + cacheDir);
         new File(cacheDir).mkdirs();
