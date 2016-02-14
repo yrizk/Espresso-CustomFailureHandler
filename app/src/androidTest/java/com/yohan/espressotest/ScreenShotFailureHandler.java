@@ -17,12 +17,12 @@ import java.lang.ref.WeakReference;
 /**
  * Created by rizk on 2/3/16.
  */
-public class MyFailureHandler implements FailureHandler {
+public class ScreenShotFailureHandler implements FailureHandler {
 
     private final WeakReference<Activity> activityRef;
     private ScreenShooter screenShotManager;
 
-    public MyFailureHandler(Activity ref) {
+    public ScreenShotFailureHandler(Activity ref) {
         activityRef = new WeakReference<Activity>(ref);
         screenShotManager = new ScreenShooter(ref);
     }
